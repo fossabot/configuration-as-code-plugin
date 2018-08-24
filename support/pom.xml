@@ -62,6 +62,13 @@
       <version>2.3</version>
       <optional>true</optional>
     </dependency>
+      <!-- https://mvnrepository.com/artifact/com.sonyericsson.hudson.plugins.gerrit/gerrit-trigger -->
+      <dependency>
+          <groupId>com.sonyericsson.hudson.plugins.gerrit</groupId>
+          <artifactId>gerrit-trigger</artifactId>
+          <version>2.27.5-SNAPSHOT</version>
+      </dependency>
+
 
     
   </dependencies>

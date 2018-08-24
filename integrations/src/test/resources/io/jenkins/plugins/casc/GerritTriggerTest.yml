@@ -1,0 +1,9 @@
+jenkins:
+  systemMessage: "Welcome to TEST"
+gerrit:
+  servers:
+    - name: "gerrit-test-server"
+      noConnectionOnStartup: true
+      config:
+        gerritAuthKeyFile: "/var/jenkins_home/gerrit_key.pem</gerritAuthKeyFile"
+        gerritUserName: "admin"
