@@ -95,6 +95,7 @@ public class GerritRootConfigurator extends BaseConfigurator<PluginImpl> impleme
 
     @Override
     public PluginImpl configure(CNode config, ConfigurationContext context) throws ConfiguratorException {
+        //TODO: at this moment supports only single gerrit server
         Mapping map = config.asMapping();
         final CNode serversCNode = map.get("servers");
         final PluginImpl gerrit = PluginImpl.getInstance();
@@ -102,8 +103,28 @@ public class GerritRootConfigurator extends BaseConfigurator<PluginImpl> impleme
         if(gerrit == null){
             throw new ConfiguratorException("Can't obtain gerrit plugin instance");
         }
+
+        // first create config for server - new or existing
         Config serverConfig = new Config();
-        GerritServer gerritServer = new GerritServer(serversCNode.asMapping().getScalarValue("name"));
+
+
+        List<GerritServer> gerritServers = gerrit.getServers();
+        if(gerritServers.size() > 1){
+            throw new ConfiguratorException("Only one gerrit server can be configured at this moment");
+        }
+        GerritServer firstServer =  gerrit.getFirstServer();
+        if (firstServer != null){
+            firstServer.setConfig(serverConfig);
+        }
+        else {
+
+            GerritServer gerritServer = new GerritServer(serversCNode.asMapping().getScalarValue("name"));
+
+            gerritServer.setConfig(serverConfig);
+            gerrit.addServer(gerritServer);
+        }
+
+
 
         return gerrit;
     }
