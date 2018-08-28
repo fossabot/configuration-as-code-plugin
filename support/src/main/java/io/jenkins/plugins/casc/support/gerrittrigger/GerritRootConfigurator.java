@@ -14,23 +14,31 @@ import io.jenkins.plugins.casc.model.Mapping;
 
 
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.Config;
+
 import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritServer;
+import io.jenkins.plugins.casc.model.Sequence;
 import io.jenkins.plugins.casc.plugins.Plugins;
 import jenkins.model.Jenkins;
+import jenkins.security.s2m.AdminWhitelistRule;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 import static io.jenkins.plugins.casc.Attribute.noop;
 
 @Extension(optional = true)
 @Restricted(NoExternalUse.class)
 public class GerritRootConfigurator extends BaseConfigurator<PluginImpl> implements RootElementConfigurator<PluginImpl>  {
+
+
     /**
      * Build or identify the target component this configurator has to handle based on the provided configuration node.
      *
@@ -77,7 +85,7 @@ public class GerritRootConfigurator extends BaseConfigurator<PluginImpl> impleme
     @Override
     public Set<Attribute<PluginImpl, ?>> describe() {
         Set<Attribute<PluginImpl, ?>> attr =  new HashSet<>();
-        attr.add(new Attribute<PluginImpl, GerritServer>("servers", GerritServer.class));
+        attr.add(new MultivaluedAttribute<PluginImpl, GerritServer>("servers", GerritServer.class));
         return attr;
     }
     /**
@@ -93,41 +101,21 @@ public class GerritRootConfigurator extends BaseConfigurator<PluginImpl> impleme
         return null;
     }
 
+    @Nonnull
     @Override
-    public PluginImpl configure(CNode config, ConfigurationContext context) throws ConfiguratorException {
-        //TODO: at this moment supports only single gerrit server
-        Mapping map = config.asMapping();
-        final CNode serversCNode = map.get("servers");
-        final PluginImpl gerrit = PluginImpl.getInstance();
-
-        if(gerrit == null){
-            throw new ConfiguratorException("Can't obtain gerrit plugin instance");
+    public PluginImpl configure(CNode c, ConfigurationContext context) throws ConfiguratorException {
+        PluginImpl plugin = getTargetComponent(context);
+        Mapping map = c.asMapping();
+        final CNode serversNode = map.get("servers");
+        List<GerritServer> gerritServerList = new ArrayList<GerritServer>();
+        for(CNode srv : serversNode.asSequence()){
+            Configurator<GerritServer> sc = context.lookup(GerritServer.class);
+            GerritServer gerritServer = sc.configure(srv,context);
+            gerritServerList.add(gerritServer);
         }
+        plugin.setServers(gerritServerList);
+        return plugin;
 
-        // first create config for server - new or existing
-        Config serverConfig = new Config();
-
-
-        List<GerritServer> gerritServers = gerrit.getServers();
-        if(gerritServers.size() > 1){
-            throw new ConfiguratorException("Only one gerrit server can be configured at this moment");
-        }
-        GerritServer firstServer =  gerrit.getFirstServer();
-        if (firstServer != null){
-            firstServer.setConfig(serverConfig);
-        }
-        else {
-
-            GerritServer gerritServer = new GerritServer(serversCNode.asMapping().getScalarValue("name"));
-
-            gerritServer.setConfig(serverConfig);
-            gerrit.addServer(gerritServer);
-        }
-
-
-
-        return gerrit;
     }
-
 
 }

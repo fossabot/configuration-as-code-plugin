@@ -11,6 +11,7 @@ public class GerritTriggerTest {
     @Rule
     public JenkinsConfiguredWithCodeRule j = new JenkinsConfiguredWithCodeRule();
 
+
     @Test
     @ConfiguredWithCode("GerritTriggerTest.yml")
     public void check_if_config_loaded() {
