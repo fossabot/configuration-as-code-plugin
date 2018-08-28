@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static io.jenkins.plugins.casc.Attribute.noop;
 
 @Extension(optional = true)
 @Restricted(NoExternalUse.class)

@@ -6,6 +6,7 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.Config;
 import hudson.Extension;
 import io.jenkins.plugins.casc.*;
+import io.jenkins.plugins.casc.impl.attributes.MultivaluedAttribute;
 import io.jenkins.plugins.casc.model.CNode;
 import io.jenkins.plugins.casc.model.Mapping;
 import org.kohsuke.accmod.Restricted;
@@ -13,6 +14,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Extension
@@ -38,6 +40,13 @@ public class GerritServerConfigurator extends BaseConfigurator<GerritServer> {
     @Override
     public CNode describe(GerritServer instance, ConfigurationContext context) throws Exception {
         return null;
+    }
+
+    @Override
+    public Set<Attribute<GerritServer, ?>> describe() {
+        Set<Attribute<GerritServer, ?>> attr =  new HashSet<>();
+        attr.add(new MultivaluedAttribute<GerritServer, Config>("config", Config.class));
+        return attr;
     }
 
     /**
@@ -67,8 +76,17 @@ public class GerritServerConfigurator extends BaseConfigurator<GerritServer> {
     protected void configure(Mapping config, GerritServer instance, boolean dryrun, ConfigurationContext context) throws ConfiguratorException {
         final CNode configNode = config.get("config");
         Configurator<Config> cf = context.lookup(Config.class);
-        Config srvConf = cf.configure(configNode,context);
+        Config srvConf = cf.configure(configNode, context);
         instance.setConfig(srvConf);
+    }
 
+    @Override
+    public GerritServer check(CNode c, ConfigurationContext context) throws ConfiguratorException {
+        final CNode cn = c.asMapping().get("config");
+        Configurator<Config> cf = context.lookup(Config.class);
+        Config srvConf = cf.configure(cn, context);
+        GerritServer gs = new GerritServer(c.asMapping().getScalarValue("name"));
+        gs.setConfig(srvConf);
+        return gs;
     }
 }

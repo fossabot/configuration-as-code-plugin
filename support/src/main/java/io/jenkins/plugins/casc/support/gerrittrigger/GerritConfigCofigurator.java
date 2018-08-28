@@ -1,9 +1,12 @@
 package io.jenkins.plugins.casc.support.gerrittrigger;
 
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.Config;
+import hudson.Extension;
 import io.jenkins.plugins.casc.*;
 import io.jenkins.plugins.casc.model.CNode;
 import io.jenkins.plugins.casc.model.Mapping;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -11,6 +14,8 @@ import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
+@Extension
+@Restricted(NoExternalUse.class)
 public class GerritConfigCofigurator extends BaseConfigurator<Config> {
     /**
      * Build or identify the target component this configurator has to handle based on the provided configuration node.
@@ -78,6 +83,15 @@ public class GerritConfigCofigurator extends BaseConfigurator<Config> {
         Mapping map = c.asMapping();
         Config conf = this.instance(map,context);
         configure(map,conf,false,context);
+        return conf;
+    }
+
+    @Override
+    public Config check(CNode c, ConfigurationContext context) throws ConfiguratorException {
+        Mapping map = c.asMapping();
+        Config conf = this.instance(map,context);
+        String username = map.getScalarValue("gerritUserName");
+        conf.setGerritUserName(username);
         return conf;
     }
 }
