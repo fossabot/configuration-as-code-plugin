@@ -1,7 +1,7 @@
 gerrit:
   servers:
     - name: "gerrit-test-server"
-      noConnectionOnStartup: true
+      noConnectionOnStartup: false
       config:
-        gerritAuthKeyFile: "/var/jenkins_home/gerrit_key.pem</gerritAuthKeyFile"
+        gerritAuthKeyFile: "/var/jenkins_home/gerrit_key.pem/gerritAuthKeyFile"
         gerritUserName: "admin"
