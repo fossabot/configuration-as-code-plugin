@@ -1,5 +1,6 @@
 [![Build Status](https://ci.jenkins.io/job/Plugins/job/configuration-as-code-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/configuration-as-code-plugin/job/master/)
 [![Gitter](https://badges.gitter.im/jenkinsci/configuration-as-code-plugin.svg)](https://gitter.im/jenkinsci/configuration-as-code-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fthemysteq%2Fconfiguration-as-code-plugin.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fthemysteq%2Fconfiguration-as-code-plugin?ref=badge_shield)
 
 # Jenkins Configuration as Code Plugin
 
@@ -237,3 +238,7 @@ As Configuration-as-code is demonstrated to be a highly requested topic in Jenki
 of the Jenkins project.
 
 Current status : draft.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fthemysteq%2Fconfiguration-as-code-plugin.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fthemysteq%2Fconfiguration-as-code-plugin?ref=badge_large)
